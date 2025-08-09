@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Validasi Mahasiswa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 40px;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+            width: 800px;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .form-section, .data-section {
+            flex: 1;
+        }
+        h2 {
+            border-bottom: 2px solid #eaeaea;
+            padding-bottom: 10px;
+            margin-top: 0;
+            color: #333;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .checkbox-group label {
+            font-weight: normal;
+            margin-bottom: 5px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="date"],
+        select {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #displayData {
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px dashed #ccc;
+            border-radius: 4px;
+            min-height: 200px;
+        }
+        #displayData p {
+            margin: 0 0 10px 0;
+            word-break: break-all;
+        }
+        .error-message {
+            color: #D8000C;
+            font-size: 0.875em;
+            margin-top: 4px;
+            display: block;
+            min-height: 1em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="form-section">
+            <h2>📝 Form Pendaftaran</h2>
+            <form id="userForm" novalidate>
+                <div class="input-group">
+                    <label for="nim">NIM:</label>
+                    <input type="text" id="nim" name="nim" placeholder="Contoh: 2501234567">
+                    <span class="error-message" id="nim-error"></span>
+                </div>
+                 <div class="input-group">
+                    <label for="nama">Nama Lengkap:</label>
+                    <input type="text" id="nama" name="nama" placeholder="Minimal 3 kata">
+                    <span class="error-message" id="nama-error"></span>
+                </div>
+                <div class="input-group">
+                    <label for="email">Email Binus:</label>
+                    <input type="email" id="email" name="email" placeholder="contoh@binus.ac.id">
+                    <span class="error-message" id="email-error"></span>
+                </div>
+                <div class="input-group">
+                    <label for="tglLahir">Tanggal Lahir:</label>
+                    <input type="date" id="tglLahir" name="tglLahir">
+                    <span class="error-message" id="tglLahir-error"></span>
+                </div>
+                 <div class="input-group">
+                    <label for="semester">Semester:</label>
+                    <select id="semester" name="semester">
+                        <option value="">-- Pilih Semester --</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                    </select>
+                    <span class="error-message" id="semester-error"></span>
+                </div>
+                <div class="input-group">
+                    <label>Mata Kuliah Favorit (min. 2):</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="matkul" value="Kalkulus"> Kalkulus</label>
+                        <label><input type="checkbox" name="matkul" value="Basis Data"> Basis Data</label>
+                        <label><input type="checkbox" name="matkul" value="Jaringan Komputer"> Jaringan Komputer</label>
+                        <label><input type="checkbox" name="matkul" value="Struktur Data"> Struktur Data</label>
+                        <label><input type="checkbox" name="matkul" value="AI"> Kecerdasan Buatan (AI)</label>
+                    </div>
+                    <span class="error-message" id="matkul-error"></span>
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <div class="data-section">
+            <h2>📊 Data Mahasiswa</h2>
+            <div id="displayData">
+                <p>Data akan ditampilkan di sini setelah validasi berhasil.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('userForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            let isValid = true;
+
+            document.querySelectorAll('.error-message').forEach(e => e.textContent = '');
+
+            const nim = document.getElementById('nim').value;
+            const nama = document.getElementById('nama').value;
+            const email = document.getElementById('email').value;
+            const tglLahir = document.getElementById('tglLahir').value;
+            const semester = document.getElementById('semester').value;
+            const checkedMatkul = document.querySelectorAll('input[name="matkul"]:checked');
+            
+            if (isNaN(nim) || nim.length !== 10) {
+                document.getElementById('nim-error').textContent = 'NIM harus terdiri dari 10 digit angka.';
+                isValid = false;
+            }
+
+            if (nama.trim().split(' ').length < 3) {
+                document.getElementById('nama-error').textContent = 'Nama Lengkap minimal harus terdiri dari 3 kata.';
+                isValid = false;
+            }
+            
+            if (!email.endsWith('@binus.ac.id')) {
+                document.getElementById('email-error').textContent = 'Email harus menggunakan domain sekolah (@binus.ac.id).';
+                isValid = false;
+            }
+            
+            if (!tglLahir) {
+                document.getElementById('tglLahir-error').textContent = 'Tanggal lahir harus diisi.';
+                isValid = false;
+            } else {
+                const birthDate = new Date(tglLahir);
+                const today = new Date();
+                const fifteenYearsAgo = new Date(today.getFullYear() - 15, today.getMonth(), today.getDate());
+                if (birthDate > fifteenYearsAgo) {
+                    document.getElementById('tglLahir-error').textContent = 'Umur minimal harus 15 tahun.';
+                    isValid = false;
+                }
+            }
+
+            if (semester === "") {
+                document.getElementById('semester-error').textContent = 'Silakan pilih Semester.';
+                isValid = false;
+            }
+
+            if (checkedMatkul.length < 2) {
+                document.getElementById('matkul-error').textContent = 'Pilih minimal 2 mata kuliah favorit.';
+                isValid = false;
+            }
+
+            if (!isValid) {
+                return;
+            }
+            
+            const matkulFavorit = Array.from(checkedMatkul).map(cb => cb.value).join(', ');
+
+            const displayDiv = document.getElementById('displayData');
+            displayDiv.innerHTML = `
+                <p><strong>NIM:</strong> ${nim}</p>
+                <p><strong>Nama Lengkap:</strong> ${nama}</p>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Tanggal Lahir:</strong> ${tglLahir}</p>
+                <p><strong>Semester:</strong> ${semester}</p>
+                <p><strong>Mata Kuliah Favorit:</strong> ${matkulFavorit}</p>
+            `;
+            
+            document.getElementById('userForm').reset();
+        });
+    </script>
+
+</body>
+</html>
